@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Tip Calculator - Calculate Tips & Split Bills Easily</title>
+    <meta name="description" content="Free tip calculator. Calculate restaurant tips, split bills between friends, and find the total per person. Supports custom tip percentages. Fast and easy.">
+    <meta name="keywords" content="tip calculator, restaurant tip calculator, bill splitter, split bill calculator, how much tip, gratuity calculator, tip per person">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://binosheen97.github.io/tip-calculator/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Tip Calculator - Calculate Tips & Split Bills">
+    <meta property="og:description" content="Calculate restaurant tips and split bills instantly. Free online tip calculator.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://binosheen97.github.io/tip-calculator/">
+
+    <!-- Google Verification -->
+    <meta name="google-site-verification" content="cBtI9qnEEtgjEyN--AIkGKP__lNGdHbMJEZI72XqDSo" />
+    <meta name="google-adsense-account" content="ca-pub-9209701505864374">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QV903LBHRQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QV903LBHRQ');
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9209701505864374" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Tip Calculator</h1>
+            <p class="subtitle">Calculate Tips & Split Bills Instantly</p>
+        </header>
+
+        <div class="calculator-container">
+
+            <!-- Left: Inputs -->
+            <div class="left-column">
+                <div class="calc-card">
+                    <h2>Enter Details</h2>
+
+                    <!-- Bill Amount -->
+                    <div class="input-group">
+                        <label>Bill Amount</label>
+                        <div class="input-wrapper">
+                            <span class="prefix">$</span>
+                            <input type="number" id="bill" placeholder="0.00" min="0" step="0.01" oninput="calculate()">
+                        </div>
+                    </div>
+
+                    <!-- Tip % Quick Buttons -->
+                    <div class="input-group">
+                        <label>Tip Percentage</label>
+                        <div class="tip-quick">
+                            <button class="tip-pct-btn" onclick="setTip(10)">10%</button>
+                            <button class="tip-pct-btn" onclick="setTip(15)">15%</button>
+                            <button class="tip-pct-btn active" onclick="setTip(18)">18%</button>
+                            <button class="tip-pct-btn" onclick="setTip(20)">20%</button>
+                            <button class="tip-pct-btn" onclick="setTip(25)">25%</button>
+                        </div>
+                        <div class="input-wrapper" style="margin-top:12px">
+                            <input type="number" id="tip-pct" value="18" min="0" max="100" step="1" oninput="syncTipFromInput()">
+                            <span class="suffix">%</span>
+                        </div>
+                        <input type="range" id="tip-slider" min="0" max="50" value="18" step="1" class="slider" oninput="syncTipFromSlider()">
+                    </div>
+
+                    <!-- Number of People -->
+                    <div class="input-group">
+                        <label>Split Between</label>
+                        <div class="people-row">
+                            <button class="people-btn" onclick="changePeople(-1)">−</button>
+                            <div class="people-display">
+                                <span id="people-count">2</span>
+                                <span class="people-label">people</span>
+                            </div>
+                            <button class="people-btn" onclick="changePeople(1)">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Quality Rating -->
+                    <div class="input-group">
+                        <label>Service Quality</label>
+                        <div class="rating-row">
+                            <button class="rating-btn" onclick="setTip(10); setRating(this)">😞 Poor</button>
+                            <button class="rating-btn" onclick="setTip(15); setRating(this)">😐 Ok</button>
+                            <button class="rating-btn active" onclick="setTip(18); setRating(this)">😊 Good</button>
+                            <button class="rating-btn" onclick="setTip(20); setRating(this)">😃 Great</button>
+                            <button class="rating-btn" onclick="setTip(25); setRating(this)">🤩 Wow!</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Unit -->
+                <div class="ad-container">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-9209701505864374"
+                         data-ad-slot="auto"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </div>
+            </div>
+
+            <!-- Right: Results -->
+            <div class="right-column">
+                <div class="results-card">
+                    <h2>Your Bill Summary</h2>
+
+                    <div class="result-hero">
+                        <div class="hero-row">
+                            <div class="hero-box blue">
+                                <div class="hero-label">Tip Amount</div>
+                                <div class="hero-value" id="tip-amount">$0.00</div>
+                            </div>
+                            <div class="hero-box purple">
+                                <div class="hero-label">Total Bill</div>
+                                <div class="hero-value" id="total-bill">$0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="per-person-section">
+                        <h3>👥 Per Person</h3>
+                        <div class="per-person-grid">
+                            <div class="pp-box">
+                                <div class="pp-label">Bill Each</div>
+                                <div class="pp-value" id="pp-bill">$0.00</div>
+                            </div>
+                            <div class="pp-box">
+                                <div class="pp-label">Tip Each</div>
+                                <div class="pp-value" id="pp-tip">$0.00</div>
+                            </div>
+                            <div class="pp-box highlight">
+                                <div class="pp-label">Total Each</div>
+                                <div class="pp-value large" id="pp-total">$0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="breakdown-section">
+                        <div class="breakdown-row">
+                            <span>Bill Amount</span>
+                            <span id="br-bill">$0.00</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Tip (<span id="br-pct">18</span>%)</span>
+                            <span id="br-tip">$0.00</span>
+                        </div>
+                        <div class="breakdown-row total-row">
+                            <span>Total</span>
+                            <span id="br-total">$0.00</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Split by</span>
+                            <span id="br-people">2 people</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tip Reference Card -->
+                <div class="ref-card">
+                    <h3>📋 Tip Guide</h3>
+                    <div class="ref-list">
+                        <div class="ref-item"><span>Restaurant (poor)</span><span class="ref-val">10%</span></div>
+                        <div class="ref-item"><span>Restaurant (average)</span><span class="ref-val">15%</span></div>
+                        <div class="ref-item"><span>Restaurant (good)</span><span class="ref-val">18-20%</span></div>
+                        <div class="ref-item"><span>Restaurant (excellent)</span><span class="ref-val">25%+</span></div>
+                        <div class="ref-item"><span>Pizza delivery</span><span class="ref-val">10-15%</span></div>
+                        <div class="ref-item"><span>Taxi/Rideshare</span><span class="ref-val">15-20%</span></div>
+                        <div class="ref-item"><span>Hair salon/barber</span><span class="ref-val">15-20%</span></div>
+                        <div class="ref-item"><span>Hotel housekeeping</span><span class="ref-val">$2-5/day</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <div class="info-card">
+                <h2>How to Calculate a Tip</h2>
+                <p>A tip is a percentage of your bill given to the service staff as a gratuity. To calculate manually:</p>
+                <ul>
+                    <li><strong>Step 1:</strong> Multiply bill × tip% ÷ 100 = Tip amount</li>
+                    <li><strong>Step 2:</strong> Add tip to bill = Total amount</li>
+                    <li><strong>Step 3:</strong> Divide total by number of people = Per person</li>
+                    <li><strong>Example:</strong> $60 bill × 20% = $12 tip → $72 total → $36 each (2 people)</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h2>When to Tip</h2>
+                <ul>
+                    <li><strong>Sit-down restaurants:</strong> Always tip 15-20%</li>
+                    <li><strong>Buffets:</strong> 10% for beverage service</li>
+                    <li><strong>Fast food:</strong> Optional, 10% if tip jar present</li>
+                    <li><strong>Takeout:</strong> Optional, 5-10% for complex orders</li>
+                    <li><strong>Bad service:</strong> Still tip, speak to manager instead</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h2>Tipping Etiquette</h2>
+                <ul>
+                    <li>Tip is based on pre-tax amount in most countries</li>
+                    <li>Tipping culture varies by country — not universal</li>
+                    <li>In US, 18-20% is the standard for good service</li>
+                    <li>Large parties often have automatic gratuity (18-20%)</li>
+                    <li>Cash tips are preferred by many service workers</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                <strong>Calculators:</strong>
+                <a href="/age-calculator/">Age</a> |
+                <a href="/bmi-calculator/">BMI</a> |
+                <a href="/percentage-calculator/">Percentage</a> |
+                <a href="/date-calculator/">Date</a> |
+                <a href="/loan-calculator/">Loan/EMI</a> |
+                <a href="/calorie-calculator/">Calories</a> |
+                <a href="/tip-calculator/">Tip</a>
+            </p>
+            <p>
+                <strong>Tools:</strong>
+                <a href="/unit-converter/">Unit Converter</a> |
+                <a href="/password-generator/">Password Generator</a> |
+                <a href="/word-counter/">Word Counter</a> |
+                <a href="/case-converter/">Case Converter</a> |
+                <a href="/stopwatch/">Stopwatch</a>
+            </p>
+            <p>
+                <a href="/">Home</a> |
+                <a href="/about.html">About Us</a> |
+                <a href="/contact.html">Contact</a> |
+                <a href="/privacy-policy.html">Privacy Policy</a> |
+                <a href="/terms-of-service.html">Terms of Service</a>
+            </p>
+            <p>&copy; 2026 Free Online Tools. Free tip calculator.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
